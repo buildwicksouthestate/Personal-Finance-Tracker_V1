@@ -3,142 +3,272 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Personal Finance Tracker</title>
+<title>Personal Finance Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;--primary:#5b4bff;--green:#16a34a;--red:#dc2626;--purple:#9333ea;--border:#e6e9f0}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:linear-gradient(135deg,#f7f5ff,#eef7ff);color:var(--text)}
-header{padding:20px 28px;background:linear-gradient(90deg,#4f46e5,#7c3aed,#ec4899);color:white;display:flex;justify-content:space-between;align-items:center;gap:15px}
-header h1{margin:0;font-size:24px}.wrap{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 76px)}
-aside{background:#111827;color:#fff;padding:18px;overflow:auto}.sideTitle{font-size:12px;color:#9ca3af;text-transform:uppercase;margin:16px 8px 8px}
-.year,.month{width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:10px;border-radius:10px;cursor:pointer}.year:hover,.month:hover,.active{background:#312e81}
-main{padding:24px;overflow:auto}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
-button,.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
-button.secondary{background:#e5e7eb;color:#111827}.filters{display:flex;gap:8px;flex-wrap:wrap}
-select,input{border:1px solid var(--border);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 8px 25px #1f293710}.label{color:var(--muted);font-size:13px}.value{font-size:25px;font-weight:800;margin-top:7px}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.panel{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 8px 25px #1f293710}.panel h2{margin:0 0 14px;font-size:18px}
-.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.unit{padding:15px;border-radius:15px;color:white;min-height:100px;cursor:pointer}.paid{background:linear-gradient(135deg,#16a34a,#22c55e)}.pending{background:linear-gradient(135deg,#dc2626,#f43f5e)}.reimb{background:linear-gradient(135deg,#7e22ce,#a855f7)}
-.unit strong{display:block;font-size:16px}.unit span{display:block;margin-top:9px;font-size:13px}
-table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:13px}th{color:#667085;background:#fafafa;position:sticky;top:0}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.open{display:flex}.modalBox{background:#fff;border-radius:20px;padding:22px;max-width:650px;width:100%;max-height:90vh;overflow:auto}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form label{font-size:12px;color:#667085}.form input,.form select{width:100%;margin-top:5px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:520px){main{padding:12px}.cards{grid-template-columns:1fr}.form{grid-template-columns:1fr}}
+:root{--bg:#f5f7fb;--card:#fff;--text:#182033;--muted:#6b7280;--line:#e5e7eb;--primary:#5b4bff;--primary2:#7c3aed;--green:#16a34a;--red:#dc2626;--purple:#9333ea;--orange:#f59e0b;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f8f7ff,#eef8ff);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+header{height:68px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;color:#fff;background:linear-gradient(90deg,#4338ca,#7c3aed,#db2777);box-shadow:0 5px 20px #11182722}
+header h1{font-size:21px;margin:0}header span{font-size:13px;opacity:.9}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}
+aside{background:#101827;color:#fff;padding:17px 13px;overflow:auto}.side-title{font-size:10px;text-transform:uppercase;color:#94a3b8;margin:14px 8px 7px}
+.nav{width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:10px 11px;border-radius:9px;cursor:pointer;margin-bottom:3px}.nav:hover,.nav.active{background:#312e81;color:#fff}
+main{padding:20px;overflow:auto}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+button,select,input{font:inherit;border-radius:9px;padding:9px 11px;border:1px solid var(--line);background:#fff;color:var(--text)}button{border:0;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}.secondary{background:#e5e7eb;color:#111827}.danger{background:var(--red)}
+.view{display:none}.view.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.label{font-size:11px;color:var(--muted)}.value{font-size:23px;font-weight:800;margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.panel h2{margin:0 0 12px;font-size:16px}
+.accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.account{border-radius:13px;padding:13px;background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #e0e7ff}.account b{display:block}.account small{display:block;color:#64748b;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #edf0f5;text-align:left}th{position:sticky;top:0;background:#fafafa;color:#667085}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:10px;font-weight:700}.tag.bank{background:#dcfce7;color:#166534}.tag.cc{background:#ede9fe;color:#6b21a8}.tag.pending{background:#fee2e2;color:#991b1b}.tag.reimb{background:#f3e8ff;color:#7e22ce}.tag.transfer{background:#dbeafe;color:#1d4ed8}
+.summary-table{max-height:540px;overflow:auto}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare .mini{padding:13px;border:1px solid var(--line);border-radius:12px}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:14px;z-index:20}.modal.open{display:flex}.box{background:#fff;width:min(700px,100%);max-height:94vh;overflow:auto;border-radius:18px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.form label{font-size:11px;color:#667085}.form input,.form select{width:100%;margin-top:4px}.full{grid-column:1/-1}.actions{text-align:right;margin-top:15px}.hidden{display:none!important}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.accounts{grid-template-columns:1fr 1fr}}@media(max-width:520px){main{padding:11px}.cards,.accounts,.form,.compare{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header><h1>💰 Personal Finance Tracker</h1><div id="period">September 2026</div></header>
-<div class="wrap">
+<header><h1>💰 Personal Finance Dashboard</h1><span id="period"></span></header>
+<div class="layout">
 <aside>
-<div class="sideTitle">Years</div><button class="year active" data-year="2026">2026</button><button class="year" data-year="2027">2027</button>
-<div class="sideTitle">Months</div><div id="months"></div>
+<div class="side-title">Main</div>
+<button class="nav active" onclick="showView('dashboard',this)">📊 Dashboard</button>
+<button class="nav" onclick="showView('summary',this)">📅 Monthly Summary</button>
+<button class="nav" onclick="showView('balances',this)">💰 Balances</button>
+<button class="nav" onclick="showView('transactions',this)">🧾 Transactions</button>
+<div class="side-title">Years</div><div id="years"></div>
+<div class="side-title">Months</div><div id="months"></div>
 </aside>
 <main>
 <div class="toolbar">
 <button onclick="openModal()">＋ Add Transaction</button>
-<button class="secondary" onclick="loadDemo()">Load Demo</button>
-<div class="filters">
-<select id="typeFilter" onchange="render()"><option value="">All Types</option><option>Income</option><option>Expense</option></select>
-<select id="accountFilter" onchange="render()"><option value="">All Accounts</option><option>Bank</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select>
-</div></div>
+<select id="yearSelect" onchange="year=+this.value;syncNav();renderAll()"></select>
+<select id="monthSelect" onchange="month=+this.value;syncNav();renderAll()"></select>
+<select id="typeFilter" onchange="renderTransactions()"><option value="">All Types</option><option>Income</option><option>Expense</option><option>Credit Card Payment</option></select>
+<select id="paymentFilter" onchange="renderTransactions()"><option value="">Bank + Credit Card</option><option>Bank Account</option><option>Credit Card</option></select>
+<select id="sourceFilter" onchange="renderTransactions()"><option value="">All Sources</option></select>
+<button class="secondary" onclick="load()">↻ Refresh</button>
+</div>
+
+<section id="dashboard" class="view active">
 <div class="cards">
+<div class="card"><div class="label">Opening / Carry Forward</div><div class="value" id="opening">₹0</div></div>
 <div class="card"><div class="label">Income</div><div class="value" id="income">₹0</div></div>
-<div class="card"><div class="label">Expenses</div><div class="value" id="expense">₹0</div></div>
-<div class="card"><div class="label">Net This Month</div><div class="value" id="net">₹0</div></div>
-<div class="card"><div class="label">Carried Balance</div><div class="value" id="carry">₹0</div></div>
+<div class="card"><div class="label">Total Expenses</div><div class="value" id="expenses">₹0</div></div>
+<div class="card"><div class="label">Net Cash Flow</div><div class="value" id="net">₹0</div></div>
+<div class="card"><div class="label">Closing Bank Balance</div><div class="value" id="closing">₹0</div></div>
 </div>
 <div class="grid">
-<section class="panel"><h2>Monthly Overview</h2><canvas id="chart"></canvas></section>
-<section class="panel"><h2>Day-wise Transactions</h2><div id="tableWrap"></div></section>
-<section class="panel" style="grid-column:1/-1"><h2>Account / Credit Card Summary</h2><div class="units" id="accounts"></div></section>
+<section class="panel"><h2>Income vs Expenses — Year</h2><canvas id="yearChart"></canvas></section>
+<section class="panel"><h2>Expense Breakdown — Selected Month</h2><canvas id="catChart"></canvas></section>
+<section class="panel" style="grid-column:1/-1"><h2>🏦 Bank Account Balances</h2><div class="accounts" id="bankCards"></div></section>
+<section class="panel" style="grid-column:1/-1"><h2>💳 Credit Card Outstanding</h2><div class="accounts" id="cardCards"></div></section>
 </div>
+</section>
+
+<section id="summary" class="view">
+<div class="panel"><h2>Monthly Summary — <span id="summaryYear"></span></h2><div class="summary-table"><table><thead><tr><th>Month</th><th>Opening</th><th>Income</th><th>Bank Expenses</th><th>Card Spending</th><th>Card Payments</th><th>Net Cash Flow</th><th>Closing</th></tr></thead><tbody id="summaryBody"></tbody></table></div></div>
+<div class="panel" style="margin-top:15px"><h2>Month-to-Month Comparison</h2><div class="compare" id="comparison"></div></div>
+</section>
+
+<section id="balances" class="view">
+<div class="grid">
+<section class="panel"><h2>🏦 Bank Accounts</h2><div class="accounts" id="bankBalancePage"></div></section>
+<section class="panel"><h2>💳 Credit Cards</h2><div class="accounts" id="cardBalancePage"></div></section>
+</div>
+</section>
+
+<section id="transactions" class="view">
+<div class="panel"><h2>Transactions — <span id="txCount">0</span></h2><div style="max-height:600px;overflow:auto" id="txTable"></div></div>
+</section>
 </main></div>
 
-<div class="modal" id="modal"><div class="modalBox">
+<div class="modal" id="modal"><div class="box">
 <h2 id="modalTitle">Add Transaction</h2>
-<form id="txForm" class="form">
-<label>Date<input id="date" type="date" required></label>
-<label>Type<select id="type"><option>Expense</option><option>Income</option></select></label>
-<label>Category<select id="category"></select></label>
-<label>Amount<input id="amount" type="number" min="0" step="0.01" required></label>
-<label>Account<select id="account"><option>Bank</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select></label>
-<label>Credit Card<select id="card"><option value="">None</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select></label>
-<label class="full">Description<input id="description" placeholder="e.g. Vegetables from market"></label>
-<label class="full">Notes<input id="notes"></label>
-</form><div class="actions"><button class="secondary" onclick="closeModal()">Cancel</button><button onclick="saveTx()">Save</button></div>
+<div class="form">
+<label>Date<input id="fDate" type="date"></label>
+<label>Type<select id="fType"><option>Expense</option><option>Income</option><option>Credit Card Payment</option></select></label>
+<label>Category<select id="fCategory"></select></label>
+<label>Amount<input id="fAmount" type="number" min="0" step=".01"></label>
+<label>Payment Type<select id="fPayment"><option>Bank Account</option><option>Credit Card</option></select></label>
+<label id="bankWrap">Bank Account<select id="fBank"></select></label>
+<label id="cardWrap" class="hidden">Credit Card<select id="fCard"></select></label>
+<label>Status<select id="fStatus"><option>Paid</option><option>Pending</option><option>Reimbursement</option><option>Received</option><option>Partially Paid</option></select></label>
+<label class="full">Description<input id="fDescription"></label>
+<label class="full">Notes<input id="fNotes"></label>
+</div>
+<div class="actions"><button class="secondary" onclick="closeModal()">Cancel</button>
+<button class="danger hidden" id="deleteBtn" onclick="deleteTx()">Delete</button>
+<button onclick="saveTx()">Save</button></div>
 </div></div>
 
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbzeqzDSQOU515uhrFOrbwbEnL6vYM0wmE7wWO5wsAGMjwaSmKOWoRskYOaxxvbdtA03/exec';
-const expenses=["Maid Salary","Movies","Masala","Vegetables","Fruits","Dairy","Petrol","Metro","Building maintenance","Electricity","Furniture","Aesthetic","Gifts","Appliances","Medical","Beverages","Protien","Office Snacks"];
-const incomes=["Sonu Salary","Ambica Salary","Ambica Foundation","Rental Income","GST Filing","Reimbursments"];
-const cards=["Sonu ICICI","Sonu Slice","Sonu IDFC","Ambica HDFC","Ambica SBI"];
-const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
-let year=2026,month=8,editingRow=null;
-let tx=[];
+const API_URL='https://script.google.com/macros/s/AKfycbzuERoYV0VYsEKPsLttbcpqAEEmY3qMNe0AZPkDhXM1wSDtZHXUNh-SYCT9NLFlGzKZ/exec';
+const BANKS=["Sonu ICICI","Sonu Slice","Sonu HDFC","Sonu RBL","Ambica SBI","Ambica Slice"];
+const CARDS=["Sonu ICICI","Sonu Slice","Sonu IDFC","Ambica HDFC","Ambica SBI"];
+const EXPENSES=["Maid Salary","Movies","Masala","Vegetables","Fruits","Dairy","Petrol","Metro","Building maintenance","Electricity","Furniture","Aesthetic","Gifts","Appliances","Medical","Beverages","Protien","Office Snacks"];
+const INCOMES=["Sonu Salary","Ambica Salary","Ambica Foundation","Rental Income","GST Filing","Reimbursments"];
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+let tx=[], banks=[], cards=[], monthly=[], year=new Date().getFullYear(), month=new Date().getMonth(), editRow=null, yearChart=null, catChart=null;
 
-document.getElementById('months').innerHTML=months.map((m,i)=>`<button class="month ${i===month?'active':''}" onclick="setMonth(${i})">${m}</button>`).join('');
-document.querySelectorAll('.year').forEach(b=>b.onclick=()=>{year=+b.dataset.year;document.querySelectorAll('.year').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
-document.getElementById('type').onchange=updateCategories;
-document.getElementById('date').value=new Date().toISOString().slice(0,10);
-updateCategories();
-loadTransactions();
+function money(n){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(Number(n||0))}
+function showView(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('aside .nav').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderAll()}
+function syncNav(){
+  yearSelect.value=year; monthSelect.value=month;
+  document.querySelectorAll('#years .nav').forEach(x=>x.classList.toggle('active',+x.dataset.y===year));
+  document.querySelectorAll('#months .nav').forEach(x=>x.classList.toggle('active',+x.dataset.m===month));
+  period.textContent=MONTHS[month]+' '+year;
+}
+function buildNav(){
+  const ys=[2025,2026,2027,2028,2029,2030];
+  years.innerHTML=ys.map(y=>`<button class="nav ${y===year?'active':''}" data-y="${y}" onclick="year=${y};syncNav();renderAll()">${y}</button>`).join('');
+  months.innerHTML=MONTHS.map((m,i)=>`<button class="nav ${i===month?'active':''}" data-m="${i}" onclick="month=${i};syncNav();renderAll()">${m}</button>`).join('');
+  yearSelect.innerHTML=ys.map(y=>`<option value="${y}">${y}</option>`).join('');
+  monthSelect.innerHTML=MONTHS.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+  syncNav();
+}
+function fillModalLists(){
+  fBank.innerHTML=BANKS.map(x=>`<option>${x}</option>`).join('');
+  fCard.innerHTML=CARDS.map(x=>`<option>${x}</option>`).join('');
+  sourceFilter.innerHTML='<option value="">All Sources</option>'+[...BANKS,...CARDS].map(x=>`<option>${x}</option>`).join('');
+}
+function updateCategories(){
+  const type=fType.value;
+  const arr=type==='Income'?INCOMES:(type==='Credit Card Payment'?['Credit Card Payment']:EXPENSES);
+  fCategory.innerHTML=arr.map(x=>`<option>${x}</option>`).join('');
+}
+function togglePaymentFields(){
+  const type=fType.value, p=fPayment.value;
+  if(type==='Credit Card Payment'){
+    fPayment.value='Bank Account';
+    fPayment.disabled=true;
+    bankWrap.classList.remove('hidden');
+    cardWrap.classList.remove('hidden');
+  }else{
+    fPayment.disabled=false;
+    const cc=p==='Credit Card';
+    bankWrap.classList.toggle('hidden',cc);
+    cardWrap.classList.toggle('hidden',!cc);
+  }
+}
+fType.onchange=()=>{updateCategories();togglePaymentFields()};
+fPayment.onchange=togglePaymentFields;
 
-  async function loadTransactions() {
-
-    try {
-
-        if (API_URL.startsWith('PASTE_')) {
-            console.log('Apps Script URL not configured');
-            render();
-            return;
-        }
-
-        const response = await fetch(API_URL + '?action=get');
-
-        const result = await response.json();
-
-        if (!result.ok) {
-            throw new Error(result.error || 'Unable to load transactions');
-        }
-
-        tx = result.transactions || [];
-
-        console.log('Transactions loaded:', tx.length);
-
-        render();
-
-    } catch (error) {
-
-        console.error('Load failed:', error);
-
-        alert(
-            'Unable to load transactions from Google Sheets.\n\n' +
-            error.message
-        );
+function monthTransactions(y=year,m=month){
+  return tx.filter(t=>{const d=new Date(t.date+'T00:00:00');return d.getFullYear()===y&&d.getMonth()===m});
+}
+function getMonthly(y,m){
+  const arr=monthly.find(x=>x.year===y&&x.month===m);
+  return arr||{income:0,bankExpense:0,cardSpend:0,cardPayments:0,totalExpense:0,netCash:0};
+}
+function openingForMonth(y,m){
+  const jan = monthly.filter(x=>x.year===y && x.month<=m).sort((a,b)=>a.month-b.month);
+  let balance=0;
+  // Calculate from all transactions plus bank opening balances, using current balances and reverse cash flows.
+  const bankOpening = banks.reduce((s,x)=>s+(x.opening||0),0);
+  balance=bankOpening;
+  tx.forEach(t=>{
+    const d=new Date(t.date+'T00:00:00');
+    if(d < new Date(y,m,1)){
+      if(t.type==='Income'&&t.paymentType==='Bank Account') balance+=t.amount;
+      if(t.type==='Expense'&&t.paymentType==='Bank Account') balance-=t.amount;
+      if(t.type==='Credit Card Payment') balance-=t.amount;
     }
+  });
+  return balance;
+}
+function renderAll(){
+  syncNav();
+  renderDashboard();
+  renderSummary();
+  renderBalances();
+  renderTransactions();
+}
+function renderDashboard(){
+  const mt=monthTransactions();
+  const incomeN=mt.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
+  const bankExp=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Bank Account').reduce((s,t)=>s+t.amount,0);
+  const cardSpend=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Credit Card').reduce((s,t)=>s+t.amount,0);
+  const cardPay=mt.filter(t=>t.type==='Credit Card Payment').reduce((s,t)=>s+t.amount,0);
+  const netCash=incomeN-bankExp-cardPay;
+  const openingN=openingForMonth(year,month), closingN=openingN+netCash;
+  opening.textContent=money(openingN);income.textContent=money(incomeN);expenses.textContent=money(bankExp+cardSpend);net.textContent=money(netCash);closing.textContent=money(closingN);
+  bankCards.innerHTML=banks.map(b=>`<div class="account"><b>🏦 ${b.name}</b><small>Balance: ${money(b.balance)}</small></div>`).join('');
+  cardCards.innerHTML=cards.map(c=>`<div class="account"><b>💳 ${c.name}</b><small>Outstanding: ${money(c.outstanding)}</small></div>`).join('');
+  drawYearChart(); drawCategoryChart();
+}
+function drawYearChart(){
+  if(yearChart)yearChart.destroy();
+  const vals=MONTHS.map((_,i)=>getMonthly(year,i));
+  yearChart=new Chart(document.getElementById('yearChart'),{type:'bar',data:{labels:MONTHS,datasets:[
+    {label:'Income',data:vals.map(x=>x.income)},{label:'Expenses',data:vals.map(x=>x.totalExpense)}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+}
+function drawCategoryChart(){
+  if(catChart)catChart.destroy();
+  const mt=monthTransactions().filter(t=>t.type==='Expense');
+  const map={};mt.forEach(t=>map[t.category]=(map[t.category]||0)+t.amount);
+  catChart=new Chart(document.getElementById('catChart'),{type:'doughnut',data:{labels:Object.keys(map),datasets:[{data:Object.values(map)}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+}
+function renderSummary(){
+  summaryYear.textContent=year;
+  let rows='';
+  for(let m=0;m<12;m++){
+    const x=getMonthly(year,m), op=openingForMonth(year,m), close=op+x.netCash;
+    rows+=`<tr><td>${MONTHS[m]}</td><td>${money(op)}</td><td>${money(x.income)}</td><td>${money(x.bankExpense)}</td><td>${money(x.cardSpend)}</td><td>${money(x.cardPayments)}</td><td>${money(x.netCash)}</td><td>${money(close)}</td></tr>`;
+  }
+  summaryBody.innerHTML=rows;
+  const prev=month===0?getMonthly(year-1,11):getMonthly(year,month-1), cur=getMonthly(year,month);
+  comparison.innerHTML=`<div class="mini"><b>${MONTHS[month]} ${year}</b><br>Income: ${money(cur.income)}<br>Expenses: ${money(cur.totalExpense)}<br>Net cash: ${money(cur.netCash)}</div>
+  <div class="mini"><b>Previous month</b><br>Income: ${money(prev.income)}<br>Expenses: ${money(prev.totalExpense)}<br>Net cash: ${money(prev.netCash)}</div>`;
+}
+function renderBalances(){
+  bankBalancePage.innerHTML=banks.map(b=>`<div class="account"><b>🏦 ${b.name}</b><small>Opening: ${money(b.opening)}</small><small>Current: ${money(b.balance)}</small></div>`).join('');
+  cardBalancePage.innerHTML=cards.map(c=>`<div class="account"><b>💳 ${c.name}</b><small>Opening: ${money(c.opening)}</small><small>Outstanding: ${money(c.outstanding)}</small></div>`).join('');
+}
+function renderTransactions(){
+  const a=monthTransactions().filter(t=>(!typeFilter.value||t.type===typeFilter.value)&&(!paymentFilter.value||t.paymentType===paymentFilter.value)&&(!sourceFilter.value||t.bankAccount===sourceFilter.value||t.creditCard===sourceFilter.value));
+  txCount.textContent=a.length;
+  txTable.innerHTML=`<table><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Payment</th><th>Source</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>`+
+  a.map(t=>{
+    const source=t.type==='Credit Card Payment'?`${t.bankAccount} → ${t.creditCard}`:(t.paymentType==='Credit Card'?t.creditCard:t.bankAccount);
+    const cls=t.type==='Credit Card Payment'?'transfer':(t.paymentType==='Credit Card'?'cc':'bank');
+    return `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.category}</td><td><span class="tag ${cls}">${t.paymentType}</span></td><td>${source}</td><td>${money(t.amount)}</td><td>${t.status||''}</td><td><button onclick="editTx(${t.row})">Edit</button></td></tr>`;
+  }).join('')+'</tbody></table>';
 }
 
-function setMonth(i){month=i;document.querySelectorAll('.month').forEach((x,j)=>x.classList.toggle('active',j===i));render()}
-function updateCategories(){const a=document.getElementById('category');a.innerHTML=(document.getElementById('type').value==='Income'?incomes:expenses).map(x=>`<option>${x}</option>`).join('')}
-function money(n){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n)}
-function monthTx(){return tx.filter(t=>{let d=new Date(t.date);return d.getFullYear()===year&&d.getMonth()===month})}
-function render(){
-document.getElementById('period').textContent=`${months[month]} ${year}`;
-const data=monthTx().filter(t=>(!typeFilter.value||t.type===typeFilter.value)&&(!accountFilter.value||t.account===accountFilter.value));
-const income=data.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
-const expense=data.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0);
-document.getElementById('income').textContent=money(income);document.getElementById('expense').textContent=money(expense);document.getElementById('net').textContent=money(income-expense);
-const allBefore=tx.filter(t=>new Date(t.date)<new Date(year,month,1)).reduce((s,t)=>s+(t.type==='Income'?t.amount:-t.amount),0);
-document.getElementById('carry').textContent=money(allBefore);
-document.getElementById('tableWrap').innerHTML=`<div style="max-height:360px;overflow:auto"><table><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Account</th><th>Amount</th><th></th></tr></thead><tbody>${data.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${t.category}</td><td>${t.account}</td><td>${money(t.amount)}</td><td><button onclick="editTx(${t.row})">Edit</button></td></tr>`).join('')}</tbody></table></div>`;
-document.getElementById('accounts').innerHTML=cards.map(c=>{let n=data.filter(t=>t.type==='Expense'&&(t.card===c||t.account===c)).reduce((s,t)=>s+t.amount,0);return `<div class="unit ${n?'pending':'paid'}"><strong>${c}</strong><span>${n?money(n)+' spent':'No spending this month'}</span></div>`}).join('');
-drawChart();
+function openModal(t=null){
+  editRow=t?t.row:null;modalTitle.textContent=t?'Edit Transaction':'Add Transaction';deleteBtn.classList.toggle('hidden',!t);
+  fDate.value=t?t.date:new Date().toISOString().slice(0,10);fType.value=t?t.type:'Expense';updateCategories();
+  if(t){fCategory.value=t.category;fAmount.value=t.amount;fPayment.value=t.paymentType||'Bank Account';fBank.value=t.bankAccount||BANKS[0];fCard.value=t.creditCard||CARDS[0];fStatus.value=t.status||'Paid';fDescription.value=t.description||'';fNotes.value=t.notes||''}
+  else{fAmount.value='';fPayment.value='Bank Account';fBank.value=BANKS[0];fCard.value=CARDS[0];fStatus.value='Paid';fDescription.value='';fNotes.value=''}
+  togglePaymentFields();modal.classList.add('open');
 }
-function drawChart(){const ctx=document.getElementById('chart');if(window.c){window.c.destroy()}let vals=months.map((m,i)=>{let a=tx.filter(t=>new Date(t.date).getFullYear()===year&&new Date(t.date).getMonth()===i);return {i,inc:a.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0),exp:a.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0)}});window.c=new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:'Income',data:vals.map(x=>x.inc)},{label:'Expenses',data:vals.map(x=>x.exp)}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}})}
-function openModal(t){editingRow=t?.row||null;document.getElementById('modalTitle').textContent=editingRow?'Edit Transaction':'Add Transaction';if(t){date.value=t.date;type.value=t.type;updateCategories();category.value=t.category;amount.value=t.amount;account.value=t.account;card.value=t.card||'';description.value=t.description||'';notes.value=t.notes||''}else{txForm.reset();date.value=new Date().toISOString().slice(0,10);type.value='Expense';updateCategories()}modal.classList.add('open')}
 function closeModal(){modal.classList.remove('open')}
-async function saveTx(){const d=new Date(date.value);const payload={action:editingRow?'update':'add',row:editingRow,date:date.value,type:type.value,category:category.value,amount:+amount.value,account:account.value,creditCard:card.value,month:months[d.getMonth()],year:d.getFullYear(),description:description.value,notes:notes.value};if(API_URL.startsWith('PASTE_')){if(editingRow){let i=tx.findIndex(x=>x.row===editingRow);if(i>=0)tx[i]={...tx[i],...payload}}else tx.push({...payload,row:Date.now()});closeModal();render();return}try{let r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});let j=await r.json();if(!j.ok)throw new Error(j.error);alert(j.message);closeModal()await loadTransactions()}catch(e){alert('Save failed: '+e.message)}}
-function editTx(row){let t=tx.find(x=>x.row===row);if(t)openModal(t)}
-function loadDemo(){tx=[];for(let d=1;d<=28;d++){tx.push({row:1000+d,date:`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,type:d%5===0?'Income':'Expense',category:d%5===0?'Sonu Salary':expenses[d%expenses.length],amount:d%5===0?100000:(500+d*73),account:d%2?'Bank':cards[d%cards.length],card:d%2?'' :cards[d%cards.length],description:'Demo transaction',notes:''})}render()}
+function editTx(row){const t=tx.find(x=>x.row===row);if(t)openModal(t)}
+
+async function saveTx(){
+  if(API_URL.startsWith('PASTE_')){alert('Paste your Apps Script /exec URL into API_URL in index.html first.');return}
+  const d=new Date(fDate.value+'T00:00:00'), type=fType.value, p=fPayment.value;
+  const payload={action:editRow?'update':'add',row:editRow,date:fDate.value,type:type,category:fCategory.value,description:fDescription.value,
+    amount:+fAmount.value,paymentType:type==='Credit Card Payment'?'Bank Account':p,
+    bankAccount:fBank.value,creditCard:fCard.value,month:MONTHS[d.getMonth()],year:d.getFullYear(),status:fStatus.value,notes:fNotes.value};
+  if(type!=='Credit Card Payment'&&p==='Credit Card')payload.bankAccount='';
+  if(type!=='Credit Card Payment'&&p==='Bank Account')payload.creditCard='';
+  try{const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw Error(j.error);closeModal();await load();alert(j.message)}
+  catch(e){alert('Save failed: '+e.message)}
+}
+async function deleteTx(){
+  if(!editRow||!confirm('Delete this transaction permanently?'))return;
+  try{const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'delete',row:editRow})});const j=await r.json();if(!j.ok)throw Error(j.error);closeModal();await load();alert(j.message)}
+  catch(e){alert('Delete failed: '+e.message)}
+}
+async function load(){
+  buildNav();fillModalLists();
+  if(API_URL.startsWith('PASTE_')){renderAll();return}
+  try{
+    const r=await fetch(API_URL+'?t='+Date.now());const j=await r.json();if(!j.ok)throw Error(j.error);
+    tx=j.transactions||[];banks=j.banks||[];cards=j.cards||[];monthly=j.monthly||[];renderAll();
+  }catch(e){alert('Unable to load Google Sheets data: '+e.message);renderAll()}
+}
+load();
 </script>
 </body></html>
