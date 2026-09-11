@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Personal Finance Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#697386;--primary:#5b4bff;--green:#16a34a;--red:#dc2626;--purple:#9333ea;--border:#e6e9f0}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:linear-gradient(135deg,#f7f5ff,#eef7ff);color:var(--text)}
+header{padding:20px 28px;background:linear-gradient(90deg,#4f46e5,#7c3aed,#ec4899);color:white;display:flex;justify-content:space-between;align-items:center;gap:15px}
+header h1{margin:0;font-size:24px}.wrap{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 76px)}
+aside{background:#111827;color:#fff;padding:18px;overflow:auto}.sideTitle{font-size:12px;color:#9ca3af;text-transform:uppercase;margin:16px 8px 8px}
+.year,.month{width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:10px;border-radius:10px;cursor:pointer}.year:hover,.month:hover,.active{background:#312e81}
+main{padding:24px;overflow:auto}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+button,.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
+button.secondary{background:#e5e7eb;color:#111827}.filters{display:flex;gap:8px;flex-wrap:wrap}
+select,input{border:1px solid var(--border);border-radius:10px;padding:10px;background:#fff;color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 8px 25px #1f293710}.label{color:var(--muted);font-size:13px}.value{font-size:25px;font-weight:800;margin-top:7px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.panel{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 8px 25px #1f293710}.panel h2{margin:0 0 14px;font-size:18px}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.unit{padding:15px;border-radius:15px;color:white;min-height:100px;cursor:pointer}.paid{background:linear-gradient(135deg,#16a34a,#22c55e)}.pending{background:linear-gradient(135deg,#dc2626,#f43f5e)}.reimb{background:linear-gradient(135deg,#7e22ce,#a855f7)}
+.unit strong{display:block;font-size:16px}.unit span{display:block;margin-top:9px;font-size:13px}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:13px}th{color:#667085;background:#fafafa;position:sticky;top:0}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.open{display:flex}.modalBox{background:#fff;border-radius:20px;padding:22px;max-width:650px;width:100%;max-height:90vh;overflow:auto}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form label{font-size:12px;color:#667085}.form input,.form select{width:100%;margin-top:5px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:520px){main{padding:12px}.cards{grid-template-columns:1fr}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>💰 Personal Finance Tracker</h1><div id="period">September 2026</div></header>
+<div class="wrap">
+<aside>
+<div class="sideTitle">Years</div><button class="year active" data-year="2026">2026</button><button class="year" data-year="2027">2027</button>
+<div class="sideTitle">Months</div><div id="months"></div>
+</aside>
+<main>
+<div class="toolbar">
+<button onclick="openModal()">＋ Add Transaction</button>
+<button class="secondary" onclick="loadDemo()">Load Demo</button>
+<div class="filters">
+<select id="typeFilter" onchange="render()"><option value="">All Types</option><option>Income</option><option>Expense</option></select>
+<select id="accountFilter" onchange="render()"><option value="">All Accounts</option><option>Bank</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select>
+</div></div>
+<div class="cards">
+<div class="card"><div class="label">Income</div><div class="value" id="income">₹0</div></div>
+<div class="card"><div class="label">Expenses</div><div class="value" id="expense">₹0</div></div>
+<div class="card"><div class="label">Net This Month</div><div class="value" id="net">₹0</div></div>
+<div class="card"><div class="label">Carried Balance</div><div class="value" id="carry">₹0</div></div>
+</div>
+<div class="grid">
+<section class="panel"><h2>Monthly Overview</h2><canvas id="chart"></canvas></section>
+<section class="panel"><h2>Day-wise Transactions</h2><div id="tableWrap"></div></section>
+<section class="panel" style="grid-column:1/-1"><h2>Account / Credit Card Summary</h2><div class="units" id="accounts"></div></section>
+</div>
+</main></div>
+
+<div class="modal" id="modal"><div class="modalBox">
+<h2 id="modalTitle">Add Transaction</h2>
+<form id="txForm" class="form">
+<label>Date<input id="date" type="date" required></label>
+<label>Type<select id="type"><option>Expense</option><option>Income</option></select></label>
+<label>Category<select id="category"></select></label>
+<label>Amount<input id="amount" type="number" min="0" step="0.01" required></label>
+<label>Account<select id="account"><option>Bank</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select></label>
+<label>Credit Card<select id="card"><option value="">None</option><option>Sonu ICICI</option><option>Sonu Slice</option><option>Sonu IDFC</option><option>Ambica HDFC</option><option>Ambica SBI</option></select></label>
+<label class="full">Description<input id="description" placeholder="e.g. Vegetables from market"></label>
+<label class="full">Notes<input id="notes"></label>
+</form><div class="actions"><button class="secondary" onclick="closeModal()">Cancel</button><button onclick="saveTx()">Save</button></div>
+</div></div>
+
+<script>
+const API_URL='PASTE_YOUR_APPS_SCRIPT_WEB_APP_EXEC_URL_HERE';
+const expenses=["Maid Salary","Movies","Masala","Vegetables","Fruits","Dairy","Petrol","Metro","Building maintenance","Electricity","Furniture","Aesthetic","Gifts","Appliances","Medical","Beverages","Protien","Office Snacks"];
+const incomes=["Sonu Salary","Ambica Salary","Ambica Foundation","Rental Income","GST Filing","Reimbursments"];
+const cards=["Sonu ICICI","Sonu Slice","Sonu IDFC","Ambica HDFC","Ambica SBI"];
+const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+let year=2026,month=8,editingRow=null;
+let tx=[];
+
+document.getElementById('months').innerHTML=months.map((m,i)=>`<button class="month ${i===month?'active':''}" onclick="setMonth(${i})">${m}</button>`).join('');
+document.querySelectorAll('.year').forEach(b=>b.onclick=()=>{year=+b.dataset.year;document.querySelectorAll('.year').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.getElementById('type').onchange=updateCategories;
+document.getElementById('date').value=new Date().toISOString().slice(0,10);
+updateCategories(); render();
+
+function setMonth(i){month=i;document.querySelectorAll('.month').forEach((x,j)=>x.classList.toggle('active',j===i));render()}
+function updateCategories(){const a=document.getElementById('category');a.innerHTML=(document.getElementById('type').value==='Income'?incomes:expenses).map(x=>`<option>${x}</option>`).join('')}
+function money(n){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n)}
+function monthTx(){return tx.filter(t=>{let d=new Date(t.date);return d.getFullYear()===year&&d.getMonth()===month})}
+function render(){
+document.getElementById('period').textContent=`${months[month]} ${year}`;
+const data=monthTx().filter(t=>(!typeFilter.value||t.type===typeFilter.value)&&(!accountFilter.value||t.account===accountFilter.value));
+const income=data.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
+const expense=data.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0);
+document.getElementById('income').textContent=money(income);document.getElementById('expense').textContent=money(expense);document.getElementById('net').textContent=money(income-expense);
+const allBefore=tx.filter(t=>new Date(t.date)<new Date(year,month,1)).reduce((s,t)=>s+(t.type==='Income'?t.amount:-t.amount),0);
+document.getElementById('carry').textContent=money(allBefore);
+document.getElementById('tableWrap').innerHTML=`<div style="max-height:360px;overflow:auto"><table><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Account</th><th>Amount</th><th></th></tr></thead><tbody>${data.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${t.category}</td><td>${t.account}</td><td>${money(t.amount)}</td><td><button onclick="editTx(${t.row})">Edit</button></td></tr>`).join('')}</tbody></table></div>`;
+document.getElementById('accounts').innerHTML=cards.map(c=>{let n=data.filter(t=>t.type==='Expense'&&(t.card===c||t.account===c)).reduce((s,t)=>s+t.amount,0);return `<div class="unit ${n?'pending':'paid'}"><strong>${c}</strong><span>${n?money(n)+' spent':'No spending this month'}</span></div>`}).join('');
+drawChart();
+}
+function drawChart(){const ctx=document.getElementById('chart');if(window.c){window.c.destroy()}let vals=months.map((m,i)=>{let a=tx.filter(t=>new Date(t.date).getFullYear()===year&&new Date(t.date).getMonth()===i);return {i,inc:a.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0),exp:a.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0)}});window.c=new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:'Income',data:vals.map(x=>x.inc)},{label:'Expenses',data:vals.map(x=>x.exp)}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}})}
+function openModal(t){editingRow=t?.row||null;document.getElementById('modalTitle').textContent=editingRow?'Edit Transaction':'Add Transaction';if(t){date.value=t.date;type.value=t.type;updateCategories();category.value=t.category;amount.value=t.amount;account.value=t.account;card.value=t.card||'';description.value=t.description||'';notes.value=t.notes||''}else{txForm.reset();date.value=new Date().toISOString().slice(0,10);type.value='Expense';updateCategories()}modal.classList.add('open')}
+function closeModal(){modal.classList.remove('open')}
+async function saveTx(){const d=new Date(date.value);const payload={action:editingRow?'update':'add',row:editingRow,date:date.value,type:type.value,category:category.value,amount:+amount.value,account:account.value,creditCard:card.value,month:months[d.getMonth()],year:d.getFullYear(),description:description.value,notes:notes.value};if(API_URL.startsWith('PASTE_')){if(editingRow){let i=tx.findIndex(x=>x.row===editingRow);if(i>=0)tx[i]={...tx[i],...payload}}else tx.push({...payload,row:Date.now()});closeModal();render();return}try{let r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});let j=await r.json();if(!j.ok)throw new Error(j.error);alert(j.message);closeModal()}catch(e){alert('Save failed: '+e.message)}}
+function editTx(row){let t=tx.find(x=>x.row===row);if(t)openModal(t)}
+function loadDemo(){tx=[];for(let d=1;d<=28;d++){tx.push({row:1000+d,date:`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,type:d%5===0?'Income':'Expense',category:d%5===0?'Sonu Salary':expenses[d%expenses.length],amount:d%5===0?100000:(500+d*73),account:d%2?'Bank':cards[d%cards.length],card:d%2?'' :cards[d%cards.length],description:'Demo transaction',notes:''})}render()}
+</script>
+</body></html>
