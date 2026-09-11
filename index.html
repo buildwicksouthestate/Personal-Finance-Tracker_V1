@@ -68,7 +68,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
 </div></div>
 
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbwIFsG7We6XS1R2S_udGN9lxTvObNetwblQ6RP9SHgzJAT9lrY5smS08DU8nUs3erE/exec';
+const API_URL='https://script.google.com/macros/s/AKfycbzeqzDSQOU515uhrFOrbwbEnL6vYM0wmE7wWO5wsAGMjwaSmKOWoRskYOaxxvbdtA03/exec';
 const expenses=["Maid Salary","Movies","Masala","Vegetables","Fruits","Dairy","Petrol","Metro","Building maintenance","Electricity","Furniture","Aesthetic","Gifts","Appliances","Medical","Beverages","Protien","Office Snacks"];
 const incomes=["Sonu Salary","Ambica Salary","Ambica Foundation","Rental Income","GST Filing","Reimbursments"];
 const cards=["Sonu ICICI","Sonu Slice","Sonu IDFC","Ambica HDFC","Ambica SBI"];
@@ -80,7 +80,43 @@ document.getElementById('months').innerHTML=months.map((m,i)=>`<button class="mo
 document.querySelectorAll('.year').forEach(b=>b.onclick=()=>{year=+b.dataset.year;document.querySelectorAll('.year').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
 document.getElementById('type').onchange=updateCategories;
 document.getElementById('date').value=new Date().toISOString().slice(0,10);
-updateCategories(); render();
+updateCategories();
+loadTransactions();
+
+  async function loadTransactions() {
+
+    try {
+
+        if (API_URL.startsWith('PASTE_')) {
+            console.log('Apps Script URL not configured');
+            render();
+            return;
+        }
+
+        const response = await fetch(API_URL + '?action=get');
+
+        const result = await response.json();
+
+        if (!result.ok) {
+            throw new Error(result.error || 'Unable to load transactions');
+        }
+
+        tx = result.transactions || [];
+
+        console.log('Transactions loaded:', tx.length);
+
+        render();
+
+    } catch (error) {
+
+        console.error('Load failed:', error);
+
+        alert(
+            'Unable to load transactions from Google Sheets.\n\n' +
+            error.message
+        );
+    }
+}
 
 function setMonth(i){month=i;document.querySelectorAll('.month').forEach((x,j)=>x.classList.toggle('active',j===i));render()}
 function updateCategories(){const a=document.getElementById('category');a.innerHTML=(document.getElementById('type').value==='Income'?incomes:expenses).map(x=>`<option>${x}</option>`).join('')}
@@ -101,7 +137,7 @@ drawChart();
 function drawChart(){const ctx=document.getElementById('chart');if(window.c){window.c.destroy()}let vals=months.map((m,i)=>{let a=tx.filter(t=>new Date(t.date).getFullYear()===year&&new Date(t.date).getMonth()===i);return {i,inc:a.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0),exp:a.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0)}});window.c=new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:'Income',data:vals.map(x=>x.inc)},{label:'Expenses',data:vals.map(x=>x.exp)}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}})}
 function openModal(t){editingRow=t?.row||null;document.getElementById('modalTitle').textContent=editingRow?'Edit Transaction':'Add Transaction';if(t){date.value=t.date;type.value=t.type;updateCategories();category.value=t.category;amount.value=t.amount;account.value=t.account;card.value=t.card||'';description.value=t.description||'';notes.value=t.notes||''}else{txForm.reset();date.value=new Date().toISOString().slice(0,10);type.value='Expense';updateCategories()}modal.classList.add('open')}
 function closeModal(){modal.classList.remove('open')}
-async function saveTx(){const d=new Date(date.value);const payload={action:editingRow?'update':'add',row:editingRow,date:date.value,type:type.value,category:category.value,amount:+amount.value,account:account.value,creditCard:card.value,month:months[d.getMonth()],year:d.getFullYear(),description:description.value,notes:notes.value};if(API_URL.startsWith('PASTE_')){if(editingRow){let i=tx.findIndex(x=>x.row===editingRow);if(i>=0)tx[i]={...tx[i],...payload}}else tx.push({...payload,row:Date.now()});closeModal();render();return}try{let r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});let j=await r.json();if(!j.ok)throw new Error(j.error);alert(j.message);closeModal()}catch(e){alert('Save failed: '+e.message)}}
+async function saveTx(){const d=new Date(date.value);const payload={action:editingRow?'update':'add',row:editingRow,date:date.value,type:type.value,category:category.value,amount:+amount.value,account:account.value,creditCard:card.value,month:months[d.getMonth()],year:d.getFullYear(),description:description.value,notes:notes.value};if(API_URL.startsWith('PASTE_')){if(editingRow){let i=tx.findIndex(x=>x.row===editingRow);if(i>=0)tx[i]={...tx[i],...payload}}else tx.push({...payload,row:Date.now()});closeModal();render();return}try{let r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});let j=await r.json();if(!j.ok)throw new Error(j.error);alert(j.message);closeModal()await loadTransactions()}catch(e){alert('Save failed: '+e.message)}}
 function editTx(row){let t=tx.find(x=>x.row===row);if(t)openModal(t)}
 function loadDemo(){tx=[];for(let d=1;d<=28;d++){tx.push({row:1000+d,date:`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,type:d%5===0?'Income':'Expense',category:d%5===0?'Sonu Salary':expenses[d%expenses.length],amount:d%5===0?100000:(500+d*73),account:d%2?'Bank':cards[d%cards.length],card:d%2?'' :cards[d%cards.length],description:'Demo transaction',notes:''})}render()}
 </script>
