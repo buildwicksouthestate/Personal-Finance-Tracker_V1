@@ -6,29 +6,18 @@
 <title>Personal Finance Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#182033;--muted:#6b7280;--line:#e5e7eb;--primary:#5b4bff;--primary2:#7c3aed;--green:#16a34a;--red:#dc2626;--purple:#9333ea;--orange:#f59e0b;--blue:#2563eb}
+:root{--bg:#f5f7fb;--card:#fff;--text:#182033;--muted:#667085;--line:#e5e7eb;--primary:#5b4bff;--purple:#9333ea;--green:#16a34a;--red:#dc2626;--orange:#f59e0b;--blue:#2563eb}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f8f7ff,#eef8ff);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
-header{height:68px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;color:#fff;background:linear-gradient(90deg,#4338ca,#7c3aed,#db2777);box-shadow:0 5px 20px #11182722}
-header h1{font-size:21px;margin:0}header span{font-size:13px;opacity:.9}
-.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}
-aside{background:#101827;color:#fff;padding:17px 13px;overflow:auto}.side-title{font-size:10px;text-transform:uppercase;color:#94a3b8;margin:14px 8px 7px}
-.nav{width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:10px 11px;border-radius:9px;cursor:pointer;margin-bottom:3px}.nav:hover,.nav.active{background:#312e81;color:#fff}
-main{padding:20px;overflow:auto}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-button,select,input{font:inherit;border-radius:9px;padding:9px 11px;border:1px solid var(--line);background:#fff;color:var(--text)}button{border:0;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}.secondary{background:#e5e7eb;color:#111827}.danger{background:var(--red)}
-.view{display:none}.view.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.label{font-size:11px;color:var(--muted)}.value{font-size:23px;font-weight:800;margin-top:6px}
+header{height:68px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;color:#fff;background:linear-gradient(90deg,#4338ca,#7c3aed,#db2777);box-shadow:0 5px 20px #11182722}header h1{font-size:21px;margin:0}header span{font-size:13px;opacity:.9}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 68px)}aside{background:#101827;color:#fff;padding:17px 13px;overflow:auto}.side-title{font-size:10px;text-transform:uppercase;color:#94a3b8;margin:14px 8px 7px}.nav{width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:10px 11px;border-radius:9px;cursor:pointer;margin-bottom:3px}.nav:hover,.nav.active{background:#312e81;color:#fff}
+main{padding:20px;overflow:auto}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}button,select,input{font:inherit;border-radius:9px;padding:9px 11px;border:1px solid var(--line);background:#fff;color:var(--text)}button{border:0;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}.secondary{background:#e5e7eb;color:#111827}.danger{background:var(--red)}
+.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.label{font-size:11px;color:var(--muted)}.value{font-size:23px;font-weight:800;margin-top:6px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.panel h2{margin:0 0 12px;font-size:16px}
-.accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.account{border-radius:13px;padding:13px;background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #e0e7ff}.account b{display:block}.account small{display:block;color:#64748b;margin-top:6px}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #edf0f5;text-align:left}th{position:sticky;top:0;background:#fafafa;color:#667085}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:10px;font-weight:700}.tag.bank{background:#dcfce7;color:#166534}.tag.cc{background:#ede9fe;color:#6b21a8}.tag.pending{background:#fee2e2;color:#991b1b}.tag.reimb{background:#f3e8ff;color:#7e22ce}.tag.transfer{background:#dbeafe;color:#1d4ed8}.tx-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.tx-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.tx-detail-grid div{padding:9px;background:#fff;border:1px solid #edf0f5;border-radius:9px}
-.tx-detail-grid small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
-.account{cursor:pointer;transition:.15s}
-.account:hover{transform:translateY(-1px);box-shadow:0 5px 14px #11182712}
-@media(max-width:850px){.tx-detail-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.tx-detail-grid{grid-template-columns:1fr}}
+.accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.account{border-radius:13px;padding:13px;background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #e0e7ff;cursor:pointer}.account:hover{transform:translateY(-1px);box-shadow:0 5px 15px #11182718}.account b{display:block}.account small{display:block;color:#64748b;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:9px 8px;border-bottom:1px solid #edf0f5;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#fafafa;color:#667085;z-index:1}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:10px;font-weight:700}.tag.bank{background:#dcfce7;color:#166534}.tag.cc{background:#ede9fe;color:#6b21a8}.tag.pending{background:#fee2e2;color:#991b1b}.tag.reimb{background:#f3e8ff;color:#7e22ce}.tag.transfer{background:#dbeafe;color:#1d4ed8}.tag.income{background:#dcfce7;color:#166534}
 .summary-table{max-height:540px;overflow:auto}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare .mini{padding:13px;border:1px solid var(--line);border-radius:12px}
 .modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:14px;z-index:20}.modal.open{display:flex}.box{background:#fff;width:min(700px,100%);max-height:94vh;overflow:auto;border-radius:18px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.form label{font-size:11px;color:#667085}.form input,.form select{width:100%;margin-top:4px}.full{grid-column:1/-1}.actions{text-align:right;margin-top:15px}.hidden{display:none!important}
+.notice{padding:12px 14px;border-radius:12px;margin-bottom:12px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe}.notice.error{background:#fef2f2;color:#991b1b;border-color:#fecaca}.muted{color:#667085}.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:#f3f4f6;font-size:11px;margin-right:5px}
 @media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.accounts{grid-template-columns:1fr 1fr}}@media(max-width:520px){main{padding:11px}.cards,.accounts,.form,.compare{grid-template-columns:1fr}}
 </style>
 </head>
@@ -44,6 +33,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <div class="side-title">Years</div><div id="years"></div>
 <div class="side-title">Months</div><div id="months"></div>
 </aside>
+
 <main>
 <div class="toolbar">
 <button onclick="openModal()">＋ Add Transaction</button>
@@ -52,8 +42,12 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <select id="typeFilter" onchange="renderTransactions()"><option value="">All Types</option><option>Income</option><option>Expense</option><option>Credit Card Payment</option></select>
 <select id="paymentFilter" onchange="renderTransactions()"><option value="">Bank + Credit Card</option><option>Bank Account</option><option>Credit Card</option></select>
 <select id="sourceFilter" onchange="renderTransactions()"><option value="">All Sources</option></select>
+<select id="txScope" onchange="renderTransactions()"><option value="all">All Transactions</option><option value="month">Selected Month</option></select>
+<input id="txSearch" placeholder="Search transactions..." oninput="renderTransactions()">
 <button class="secondary" onclick="load()">↻ Refresh</button>
 </div>
+
+<div id="statusNotice" class="notice">Connecting to Google Sheets…</div>
 
 <section id="dashboard" class="view active">
 <div class="cards">
@@ -84,7 +78,11 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 </section>
 
 <section id="transactions" class="view">
-<div class="panel"><h2>Transactions — <span id="txCount">0</span></h2><div style="max-height:600px;overflow:auto" id="txTable"></div></div>
+<div class="panel">
+<h2>🧾 Transaction Ledger — <span id="txCount">0</span></h2>
+<div id="txInfo" class="muted" style="margin-bottom:10px"></div>
+<div style="max-height:650px;overflow:auto" id="txTable"></div>
+</div>
 </section>
 </main></div>
 
@@ -108,18 +106,40 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 </div></div>
 
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbzuERoYV0VYsEKPsLttbcpqAEEmY3qMNe0AZPkDhXM1wSDtZHXUNh-SYCT9NLFlGzKZ/exec';
+const API_URL='https://script.google.com/macros/s/AKfycbzm10INGB2vcCRujB-TR8K3gxaWdwe3UWDy2PHKN_IOB4e-9LVSoy_QeFn-A3gczuFZ/exec';
 const BANKS=["Sonu ICICI","Sonu Slice","Sonu HDFC","Sonu RBL","Ambica SBI","Ambica Slice"];
 const CARDS=["Sonu ICICI","Sonu Slice","Sonu IDFC","Ambica HDFC","Ambica SBI"];
 const EXPENSES=["Maid Salary","Movies","Masala","Vegetables","Fruits","Dairy","Petrol","Metro","Building maintenance","Electricity","Furniture","Aesthetic","Gifts","Appliances","Medical","Beverages","Protien","Office Snacks"];
 const INCOMES=["Sonu Salary","Ambica Salary","Ambica Foundation","Rental Income","GST Filing","Reimbursments"];
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-let tx=[], banks=[], cards=[], monthly=[], year=new Date().getFullYear(), month=new Date().getMonth(), editRow=null, yearChart=null, catChart=null;
+
+let tx=[],banks=[],cards=[],monthly=[],year=new Date().getFullYear(),month=new Date().getMonth(),editRow=null,yearChart=null,catChart=null;
 
 function money(n){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(Number(n||0))}
-function showView(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('aside .nav').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderAll()}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function normalizeDate(v){
+  if(v==null)return '';
+  const s=String(v).trim();
+  let m=s.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
+  if(m)return `${m[1]}-${m[2]}-${m[3]}`;
+  m=s.match(/^(\\d{1,2})[\\/-](\\d{1,2})[\\/-](\\d{4})$/);
+  if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  const d=new Date(s);
+  return isNaN(d.getTime())?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function dateObj(v){const s=normalizeDate(v);return s?new Date(s+'T00:00:00'):null}
+function monthTransactions(y=year,m=month){return tx.filter(t=>{const d=dateObj(t.date);return d&&d.getFullYear()===y&&d.getMonth()===m})}
+
+function showView(id,btn){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('aside .nav').forEach(x=>x.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderAll();
+}
 function syncNav(){
-  yearSelect.value=year; monthSelect.value=month;
+  yearSelect.value=year;monthSelect.value=month;
   document.querySelectorAll('#years .nav').forEach(x=>x.classList.toggle('active',+x.dataset.y===year));
   document.querySelectorAll('#months .nav').forEach(x=>x.classList.toggle('active',+x.dataset.m===month));
   period.textContent=MONTHS[month]+' '+year;
@@ -133,216 +153,155 @@ function buildNav(){
   syncNav();
 }
 function fillModalLists(){
-  fBank.innerHTML=BANKS.map(x=>`<option>${x}</option>`).join('');
-  fCard.innerHTML=CARDS.map(x=>`<option>${x}</option>`).join('');
-  sourceFilter.innerHTML='<option value="">All Sources</option>'+[...new Set([...BANKS,...CARDS])].map(x=>`<option>${x}</option>`).join('');
-  txAccountFilter.innerHTML='<option value="">All Accounts / Cards</option>'+[...new Set([...BANKS,...CARDS])].map(x=>`<option>${x}</option>`).join('');
+  fBank.innerHTML=BANKS.map(x=>`<option>${esc(x)}</option>`).join('');
+  fCard.innerHTML=CARDS.map(x=>`<option>${esc(x)}</option>`).join('');
+  sourceFilter.innerHTML='<option value="">All Sources</option>'+[...new Set([...BANKS,...CARDS])].map(x=>`<option>${esc(x)}</option>`).join('');
 }
 function updateCategories(){
   const type=fType.value;
   const arr=type==='Income'?INCOMES:(type==='Credit Card Payment'?['Credit Card Payment']:EXPENSES);
-  fCategory.innerHTML=arr.map(x=>`<option>${x}</option>`).join('');
+  fCategory.innerHTML=arr.map(x=>`<option>${esc(x)}</option>`).join('');
 }
 function togglePaymentFields(){
-  const type=fType.value, p=fPayment.value;
+  const type=fType.value,p=fPayment.value;
   if(type==='Credit Card Payment'){
-    fPayment.value='Bank Account';
-    fPayment.disabled=true;
-    bankWrap.classList.remove('hidden');
-    cardWrap.classList.remove('hidden');
+    fPayment.value='Bank Account';fPayment.disabled=true;
+    bankWrap.classList.remove('hidden');cardWrap.classList.remove('hidden');
   }else{
     fPayment.disabled=false;
     const cc=p==='Credit Card';
-    bankWrap.classList.toggle('hidden',cc);
-    cardWrap.classList.toggle('hidden',!cc);
+    bankWrap.classList.toggle('hidden',cc);cardWrap.classList.toggle('hidden',!cc);
   }
 }
-fType.onchange=()=>{updateCategories();togglePaymentFields()};
-fPayment.onchange=togglePaymentFields;
+fType.onchange=()=>{updateCategories();togglePaymentFields()};fPayment.onchange=togglePaymentFields;
 
-function monthTransactions(y=year,m=month){
-  return tx.filter(t=>{const d=new Date(String(t.date).slice(0,10)+'T00:00:00');return d.getFullYear()===y&&d.getMonth()===m});
-}
-function getMonthly(y,m){
-  const arr=monthly.find(x=>x.year===y&&x.month===m);
-  return arr||{income:0,bankExpense:0,cardSpend:0,cardPayments:0,totalExpense:0,netCash:0};
-}
+function getMonthly(y,m){return monthly.find(x=>x.year===y&&x.month===m)||{income:0,bankExpense:0,cardSpend:0,cardPayments:0,totalExpense:0,netCash:0}}
 function openingForMonth(y,m){
-  const jan = monthly.filter(x=>x.year===y && x.month<=m).sort((a,b)=>a.month-b.month);
-  let balance=0;
-  // Calculate from all transactions plus bank opening balances, using current balances and reverse cash flows.
-  const bankOpening = banks.reduce((s,x)=>s+(x.opening||0),0);
-  balance=bankOpening;
+  let balance=banks.reduce((s,x)=>s+Number(x.opening||0),0);
+  const before=new Date(y,m,1);
   tx.forEach(t=>{
-    const d=new Date(t.date+'T00:00:00');
-    if(d < new Date(y,m,1)){
-      if(t.type==='Income'&&t.paymentType==='Bank Account') balance+=t.amount;
-      if(t.type==='Expense'&&t.paymentType==='Bank Account') balance-=t.amount;
-      if(t.type==='Credit Card Payment') balance-=t.amount;
-    }
+    const d=dateObj(t.date);if(!d||d>=before)return;
+    if(t.type==='Income'&&t.paymentType==='Bank Account')balance+=Number(t.amount||0);
+    if(t.type==='Expense'&&t.paymentType==='Bank Account')balance-=Number(t.amount||0);
+    if(t.type==='Credit Card Payment')balance-=Number(t.amount||0);
   });
   return balance;
 }
-function renderAll(){
-  syncNav();
-  renderDashboard();
-  renderSummary();
-  renderBalances();
-  renderTransactions();
-}
+function renderAll(){syncNav();renderDashboard();renderSummary();renderBalances();renderTransactions()}
+
 function renderDashboard(){
-  const mt=monthTransactions();
-  const incomeN=mt.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0);
-  const bankExp=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Bank Account').reduce((s,t)=>s+t.amount,0);
-  const cardSpend=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Credit Card').reduce((s,t)=>s+t.amount,0);
-  const cardPay=mt.filter(t=>t.type==='Credit Card Payment').reduce((s,t)=>s+t.amount,0);
-  const netCash=incomeN-bankExp-cardPay;
-  const openingN=openingForMonth(year,month), closingN=openingN+netCash;
+  const mt=monthTransactions(),incomeN=mt.filter(t=>t.type==='Income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const bankExp=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Bank Account').reduce((s,t)=>s+Number(t.amount||0),0);
+  const cardSpend=mt.filter(t=>t.type==='Expense'&&t.paymentType==='Credit Card').reduce((s,t)=>s+Number(t.amount||0),0);
+  const cardPay=mt.filter(t=>t.type==='Credit Card Payment').reduce((s,t)=>s+Number(t.amount||0),0);
+  const netCash=incomeN-bankExp-cardPay,openingN=openingForMonth(year,month),closingN=openingN+netCash;
   opening.textContent=money(openingN);income.textContent=money(incomeN);expenses.textContent=money(bankExp+cardSpend);net.textContent=money(netCash);closing.textContent=money(closingN);
-  bankCards.innerHTML=banks.map(b=>`<div class="account" onclick="showView('balances',document.querySelectorAll('aside .nav')[2]);renderAccountTransactions('${String(b.name).replace(/'/g,"\\'")}')"><b>🏦 ${b.name}</b><small>Balance: ${money(b.balance)}</small><small style="color:#5b4bff;margin-top:8px">View transactions →</small></div>`).join('');
-  cardCards.innerHTML=cards.map(c=>`<div class="account" onclick="showView('balances',document.querySelectorAll('aside .nav')[2]);renderAccountTransactions('${String(c.name).replace(/'/g,"\\'")}')"><b>💳 ${c.name}</b><small>Outstanding: ${money(c.outstanding)}</small><small style="color:#5b4bff;margin-top:8px">View transactions →</small></div>`).join('');
-  drawYearChart(); drawCategoryChart();
+
+  bankCards.innerHTML=banks.map(b=>`<div class="account" onclick="openSource('${esc(b.name)}')"><b>🏦 ${esc(b.name)}</b><small>Balance: ${money(b.balance)}</small><small>Click to view transactions</small></div>`).join('');
+  cardCards.innerHTML=cards.map(c=>`<div class="account" onclick="openSource('${esc(c.name)}')"><b>💳 ${esc(c.name)}</b><small>Outstanding: ${money(c.outstanding)}</small><small>Click to view transactions</small></div>`).join('');
+  drawYearChart();drawCategoryChart();
 }
 function drawYearChart(){
   if(yearChart)yearChart.destroy();
   const vals=MONTHS.map((_,i)=>getMonthly(year,i));
-  yearChart=new Chart(document.getElementById('yearChart'),{type:'bar',data:{labels:MONTHS,datasets:[
-    {label:'Income',data:vals.map(x=>x.income)},{label:'Expenses',data:vals.map(x=>x.totalExpense)}
-  ]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+  yearChart=new Chart(document.getElementById('yearChart'),{type:'bar',data:{labels:MONTHS,datasets:[{label:'Income',data:vals.map(x=>x.income)},{label:'Expenses',data:vals.map(x=>x.totalExpense)}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
 }
 function drawCategoryChart(){
   if(catChart)catChart.destroy();
-  const mt=monthTransactions().filter(t=>t.type==='Expense');
-  const map={};mt.forEach(t=>map[t.category]=(map[t.category]||0)+t.amount);
+  const map={};monthTransactions().filter(t=>t.type==='Expense').forEach(t=>map[t.category]=(map[t.category]||0)+Number(t.amount||0));
   catChart=new Chart(document.getElementById('catChart'),{type:'doughnut',data:{labels:Object.keys(map),datasets:[{data:Object.values(map)}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
 }
 function renderSummary(){
-  summaryYear.textContent=year;
-  let rows='';
-  for(let m=0;m<12;m++){
-    const x=getMonthly(year,m), op=openingForMonth(year,m), close=op+x.netCash;
-    rows+=`<tr><td>${MONTHS[m]}</td><td>${money(op)}</td><td>${money(x.income)}</td><td>${money(x.bankExpense)}</td><td>${money(x.cardSpend)}</td><td>${money(x.cardPayments)}</td><td>${money(x.netCash)}</td><td>${money(close)}</td></tr>`;
-  }
+  summaryYear.textContent=year;let rows='';
+  for(let m=0;m<12;m++){const x=getMonthly(year,m),op=openingForMonth(year,m),close=op+x.netCash;rows+=`<tr><td>${MONTHS[m]}</td><td>${money(op)}</td><td>${money(x.income)}</td><td>${money(x.bankExpense)}</td><td>${money(x.cardSpend)}</td><td>${money(x.cardPayments)}</td><td>${money(x.netCash)}</td><td>${money(close)}</td></tr>`}
   summaryBody.innerHTML=rows;
-  const prev=month===0?getMonthly(year-1,11):getMonthly(year,month-1), cur=getMonthly(year,month);
-  comparison.innerHTML=`<div class="mini"><b>${MONTHS[month]} ${year}</b><br>Income: ${money(cur.income)}<br>Expenses: ${money(cur.totalExpense)}<br>Net cash: ${money(cur.netCash)}</div>
-  <div class="mini"><b>Previous month</b><br>Income: ${money(prev.income)}<br>Expenses: ${money(prev.totalExpense)}<br>Net cash: ${money(prev.netCash)}</div>`;
+  const prev=month===0?getMonthly(year-1,11):getMonthly(year,month-1),cur=getMonthly(year,month);
+  comparison.innerHTML=`<div class="mini"><b>${MONTHS[month]} ${year}</b><br>Income: ${money(cur.income)}<br>Expenses: ${money(cur.totalExpense)}<br>Net cash: ${money(cur.netCash)}</div><div class="mini"><b>Previous month</b><br>Income: ${money(prev.income)}<br>Expenses: ${money(prev.totalExpense)}<br>Net cash: ${money(prev.netCash)}</div>`;
 }
 function renderBalances(){
-  bankBalancePage.innerHTML=banks.map(b=>`<div class="account" onclick="renderAccountTransactions('${String(b.name).replace(/'/g,"\\'")}')">
-    <b>🏦 ${b.name}</b><small>Opening: ${money(b.opening)}</small><small>Current: ${money(b.balance)}</small>
-    <small style="color:#5b4bff;margin-top:8px">View transactions →</small>
-  </div>`).join('');
-  cardBalancePage.innerHTML=cards.map(c=>`<div class="account" onclick="renderAccountTransactions('${String(c.name).replace(/'/g,"\\'")}')">
-    <b>💳 ${c.name}</b><small>Opening: ${money(c.opening)}</small><small>Outstanding: ${money(c.outstanding)}</small>
-    <small style="color:#5b4bff;margin-top:8px">View transactions →</small>
-  </div>`).join('');
+  bankBalancePage.innerHTML=banks.map(b=>`<div class="account" onclick="openSource('${esc(b.name)}')"><b>🏦 ${esc(b.name)}</b><small>Opening: ${money(b.opening)}</small><small>Current: ${money(b.balance)}</small></div>`).join('');
+  cardBalancePage.innerHTML=cards.map(c=>`<div class="account" onclick="openSource('${esc(c.name)}')"><b>💳 ${esc(c.name)}</b><small>Opening: ${money(c.opening)}</small><small>Outstanding: ${money(c.outstanding)}</small></div>`).join('');
 }
-
-function transactionSource(t){
-  if(t.type==='Credit Card Payment') return `${t.bankAccount||''} → ${t.creditCard||''}`;
-  return t.paymentType==='Credit Card' ? (t.creditCard||'') : (t.bankAccount||'');
-}
-
+function transactionSource(t){return t.type==='Credit Card Payment'?`${t.bankAccount} → ${t.creditCard}`:(t.paymentType==='Credit Card'?t.creditCard:t.bankAccount)}
 function renderTransactions(){
-  const search=(txSearch.value||'').toLowerCase().trim();
-  const account=txAccountFilter.value;
-  const a=monthTransactions().filter(t=>{
-    const source=transactionSource(t);
-    const hay=[t.date,t.type,t.category,t.description,t.notes,t.status,source].join(' ').toLowerCase();
-    return (!typeFilter.value||t.type===typeFilter.value)
-      && (!paymentFilter.value||t.paymentType===paymentFilter.value)
-      && (!sourceFilter.value||source.includes(sourceFilter.value))
-      && (!account||source.includes(account))
-      && (!search||hay.includes(search));
-  }).sort((x,y)=>String(y.date).localeCompare(String(x.date)));
-
+  let a=[...tx];
+  const scope=txScope.value;
+  if(scope==='month')a=a.filter(t=>{const d=dateObj(t.date);return d&&d.getFullYear()===year&&d.getMonth()===month});
+  if(typeFilter.value)a=a.filter(t=>t.type===typeFilter.value);
+  if(paymentFilter.value)a=a.filter(t=>t.paymentType===paymentFilter.value);
+  if(sourceFilter.value)a=a.filter(t=>t.bankAccount===sourceFilter.value||t.creditCard===sourceFilter.value);
+  const q=txSearch.value.trim().toLowerCase();
+  if(q)a=a.filter(t=>[t.date,t.type,t.category,t.description,t.paymentType,t.bankAccount,t.creditCard,t.status,t.notes].join(' ').toLowerCase().includes(q));
+  a.sort((x,y)=>normalizeDate(y.date).localeCompare(normalizeDate(x.date))||Number(y.row)-Number(x.row));
   txCount.textContent=a.length;
+  txInfo.innerHTML=`<span class="pill">Loaded from Sheets: ${tx.length}</span><span class="pill">Showing: ${a.length}</span>${scope==='month'?`<span class="pill">${MONTHS[month]} ${year}</span>`:'<span class="pill">All dates</span>'}`;
   if(!a.length){
-    txTable.innerHTML='<div class="label" style="padding:18px">No transactions found for the selected month and filters.</div>';
+    txTable.innerHTML=`<div class="notice">${tx.length?'No transactions match the current filters. Choose “All Transactions” or clear the filters.':'Google Sheets returned 0 transactions. Check the Transactions sheet and Apps Script deployment.'}</div>`;
     return;
   }
-
-  txTable.innerHTML=`<table><thead><tr>
-    <th>Date</th><th>Type</th><th>Category</th><th>Payment</th><th>Source</th>
-    <th>Description</th><th>Amount</th><th>Status</th><th>Action</th>
-  </tr></thead><tbody>${
-    a.map(t=>{
-      const source=transactionSource(t);
-      const cls=t.type==='Credit Card Payment'?'transfer':(t.paymentType==='Credit Card'?'cc':'bank');
-      return `<tr>
-        <td>${t.date||''}</td><td>${t.type||''}</td><td>${t.category||''}</td>
-        <td><span class="tag ${cls}">${t.paymentType||''}</span></td><td>${source}</td>
-        <td>${t.description||''}${t.notes?`<br><small style="color:#64748b">${t.notes}</small>`:''}</td>
-        <td><b>${money(t.amount)}</b></td><td>${t.status||''}</td>
-        <td><button onclick="editTx(${t.row})">Edit</button></td>
-      </tr>`;
-    }).join('')
-  }</tbody></table>`;
+  txTable.innerHTML=`<table><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Payment</th><th>Source</th><th>Amount</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>`+
+  a.map(t=>{
+    const cls=t.type==='Credit Card Payment'?'transfer':(t.type==='Income'?'income':(t.paymentType==='Credit Card'?'cc':'bank'));
+    const st=String(t.status||'').toLowerCase();
+    const stcls=st.includes('pending')?'pending':st.includes('reimb')?'reimb':'';
+    return `<tr><td>${esc(normalizeDate(t.date))}</td><td><span class="tag ${cls}">${esc(t.type)}</span></td><td>${esc(t.category)}</td><td>${esc(t.description)}</td><td>${esc(t.paymentType)}</td><td>${esc(transactionSource(t))}</td><td><b>${money(t.amount)}</b></td><td>${t.status?`<span class="tag ${stcls}">${esc(t.status)}</span>`:''}</td><td>${esc(t.notes)}</td><td><button onclick="editTx(${Number(t.row)})">Edit</button></td></tr>`
+  }).join('')+'</tbody></table>';
 }
-
-function renderAccountTransactions(account){
-  const a=tx.filter(t=>{
-    const d=new Date(String(t.date).slice(0,10)+'T00:00:00');
-    return d.getFullYear()===year && d.getMonth()===month && transactionSource(t).includes(account);
-  }).sort((x,y)=>String(y.date).localeCompare(String(x.date)));
-
-  balanceAccountTitle.textContent=account+' — '+MONTHS[month]+' '+year;
-  if(!a.length){
-    balanceAccountTx.innerHTML='<div class="label" style="padding:12px">No transactions for this account/card in the selected month.</div>';
-    return;
-  }
-
-  balanceAccountTx.innerHTML=`<div class="tx-detail-grid" style="margin-bottom:12px">
-    <div><small>Transactions</small><b>${a.length}</b></div>
-    <div><small>Total Amount</small><b>${money(a.reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
-    <div><small>Income</small><b>${money(a.filter(t=>t.type==='Income').reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
-    <div><small>Expenses / Payments</small><b>${money(a.filter(t=>t.type!=='Income').reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
-  </div>
-  <div style="max-height:500px;overflow:auto"><table><thead><tr>
-    <th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th>
-  </tr></thead><tbody>
-  ${a.map(t=>`<tr><td>${t.date||''}</td><td>${t.type||''}</td><td>${t.category||''}</td>
-    <td>${t.description||''}${t.notes?`<br><small style="color:#64748b">${t.notes}</small>`:''}</td>
-    <td><b>${money(t.amount)}</b></td><td>${t.status||''}</td><td><button onclick="editTx(${t.row})">Edit</button></td>
-  </tr>`).join('')}
-  </tbody></table></div>`;
+function openSource(name){
+  showView('transactions',document.querySelectorAll('aside .nav')[3]);
+  txScope.value='all';sourceFilter.value=name;renderTransactions();
 }
-
 function openModal(t=null){
-  editRow=t?t.row:null;modalTitle.textContent=t?'Edit Transaction':'Add Transaction';deleteBtn.classList.toggle('hidden',!t);
-  fDate.value=t?t.date:new Date().toISOString().slice(0,10);fType.value=t?t.type:'Expense';updateCategories();
+  editRow=t?Number(t.row):null;modalTitle.textContent=t?'Edit Transaction':'Add Transaction';deleteBtn.classList.toggle('hidden',!t);
+  fDate.value=t?normalizeDate(t.date):new Date().toISOString().slice(0,10);fType.value=t?t.type:'Expense';updateCategories();
   if(t){fCategory.value=t.category;fAmount.value=t.amount;fPayment.value=t.paymentType||'Bank Account';fBank.value=t.bankAccount||BANKS[0];fCard.value=t.creditCard||CARDS[0];fStatus.value=t.status||'Paid';fDescription.value=t.description||'';fNotes.value=t.notes||''}
   else{fAmount.value='';fPayment.value='Bank Account';fBank.value=BANKS[0];fCard.value=CARDS[0];fStatus.value='Paid';fDescription.value='';fNotes.value=''}
   togglePaymentFields();modal.classList.add('open');
 }
 function closeModal(){modal.classList.remove('open')}
-function editTx(row){const t=tx.find(x=>x.row===row);if(t)openModal(t)}
+function editTx(row){const t=tx.find(x=>Number(x.row)===Number(row));if(t)openModal(t)}
 
 async function saveTx(){
-  if(API_URL.startsWith('PASTE_')){alert('Paste your Apps Script /exec URL into API_URL in index.html first.');return}
-  const d=new Date(fDate.value+'T00:00:00'), type=fType.value, p=fPayment.value;
-  const payload={action:editRow?'update':'add',row:editRow,date:fDate.value,type:type,category:fCategory.value,description:fDescription.value,
-    amount:+fAmount.value,paymentType:type==='Credit Card Payment'?'Bank Account':p,
-    bankAccount:fBank.value,creditCard:fCard.value,month:MONTHS[d.getMonth()],year:d.getFullYear(),status:fStatus.value,notes:fNotes.value};
+  const d=new Date(fDate.value+'T00:00:00'),type=fType.value,p=fPayment.value;
+  if(!fDate.value||!fAmount.value||Number(fAmount.value)<0){alert('Please enter a valid date and amount.');return}
+  const payload={action:editRow?'update':'add',row:editRow,date:fDate.value,type:type,category:fCategory.value,description:fDescription.value,amount:Number(fAmount.value),paymentType:type==='Credit Card Payment'?'Bank Account':p,bankAccount:fBank.value,creditCard:fCard.value,month:MONTHS[d.getMonth()],year:d.getFullYear(),status:fStatus.value,notes:fNotes.value};
   if(type!=='Credit Card Payment'&&p==='Credit Card')payload.bankAccount='';
   if(type!=='Credit Card Payment'&&p==='Bank Account')payload.creditCard='';
-  try{const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw Error(j.error);closeModal();await load();alert(j.message)}
-  catch(e){alert('Save failed: '+e.message)}
+  try{
+    const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});
+    const j=await r.json();if(!j.ok)throw Error(j.error||'Unknown server error');
+    closeModal();await load();alert(j.message||'Saved');
+  }catch(e){alert('Save failed: '+e.message)}
 }
 async function deleteTx(){
   if(!editRow||!confirm('Delete this transaction permanently?'))return;
-  try{const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'delete',row:editRow})});const j=await r.json();if(!j.ok)throw Error(j.error);closeModal();await load();alert(j.message)}
-  catch(e){alert('Delete failed: '+e.message)}
+  try{
+    const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'delete',row:editRow})});
+    const j=await r.json();if(!j.ok)throw Error(j.error||'Unknown server error');
+    closeModal();await load();alert(j.message||'Deleted');
+  }catch(e){alert('Delete failed: '+e.message)}
 }
 async function load(){
   buildNav();fillModalLists();
-  if(API_URL.startsWith('PASTE_')){renderAll();return}
+  statusNotice.textContent='Loading transactions from Google Sheets…';statusNotice.className='notice';
   try{
-    const r=await fetch(API_URL+'?t='+Date.now());const j=await r.json();if(!j.ok)throw Error(j.error);
-    tx=j.transactions||[];banks=j.banks||[];cards=j.cards||[];monthly=j.monthly||[];renderAll();
-  }catch(e){alert('Unable to load Google Sheets data: '+e.message);renderAll()}
+    const r=await fetch(API_URL+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j.ok)throw Error(j.error||'Apps Script returned an error');
+    tx=Array.isArray(j.transactions)?j.transactions.map(t=>({...t,date:normalizeDate(t.date),amount:Number(t.amount||0)})):[];
+    banks=Array.isArray(j.banks)?j.banks:[];
+    cards=Array.isArray(j.cards)?j.cards:[];
+    monthly=Array.isArray(j.monthly)?j.monthly:[];
+    statusNotice.innerHTML=`Connected ✓ &nbsp; <b>${tx.length}</b> transaction(s) loaded from Google Sheets.`;
+    renderAll();
+  }catch(e){
+    statusNotice.textContent='Unable to load Google Sheets data: '+e.message;
+    statusNotice.className='notice error';
+    tx=[];banks=[];cards=[];monthly=[];renderAll();
+  }
 }
 load();
 </script>
-</body></html>
+</body>
+</html>
