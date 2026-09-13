@@ -19,7 +19,14 @@ button,select,input{font:inherit;border-radius:9px;padding:9px 11px;border:1px s
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.label{font-size:11px;color:var(--muted)}.value{font-size:23px;font-weight:800;margin-top:6px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 7px 22px #1118270b}.panel h2{margin:0 0 12px;font-size:16px}
 .accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.account{border-radius:13px;padding:13px;background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #e0e7ff}.account b{display:block}.account small{display:block;color:#64748b;margin-top:6px}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #edf0f5;text-align:left}th{position:sticky;top:0;background:#fafafa;color:#667085}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:10px;font-weight:700}.tag.bank{background:#dcfce7;color:#166534}.tag.cc{background:#ede9fe;color:#6b21a8}.tag.pending{background:#fee2e2;color:#991b1b}.tag.reimb{background:#f3e8ff;color:#7e22ce}.tag.transfer{background:#dbeafe;color:#1d4ed8}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #edf0f5;text-align:left}th{position:sticky;top:0;background:#fafafa;color:#667085}.tag{display:inline-block;padding:4px 7px;border-radius:99px;font-size:10px;font-weight:700}.tag.bank{background:#dcfce7;color:#166534}.tag.cc{background:#ede9fe;color:#6b21a8}.tag.pending{background:#fee2e2;color:#991b1b}.tag.reimb{background:#f3e8ff;color:#7e22ce}.tag.transfer{background:#dbeafe;color:#1d4ed8}.tx-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.tx-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tx-detail-grid div{padding:9px;background:#fff;border:1px solid #edf0f5;border-radius:9px}
+.tx-detail-grid small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.account{cursor:pointer;transition:.15s}
+.account:hover{transform:translateY(-1px);box-shadow:0 5px 14px #11182712}
+@media(max-width:850px){.tx-detail-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.tx-detail-grid{grid-template-columns:1fr}}
 .summary-table{max-height:540px;overflow:auto}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare .mini{padding:13px;border:1px solid var(--line);border-radius:12px}
 .modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:14px;z-index:20}.modal.open{display:flex}.box{background:#fff;width:min(700px,100%);max-height:94vh;overflow:auto;border-radius:18px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.form label{font-size:11px;color:#667085}.form input,.form select{width:100%;margin-top:4px}.full{grid-column:1/-1}.actions{text-align:right;margin-top:15px}.hidden{display:none!important}
 @media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.accounts{grid-template-columns:1fr 1fr}}@media(max-width:520px){main{padding:11px}.cards,.accounts,.form,.compare{grid-template-columns:1fr}}
@@ -128,7 +135,8 @@ function buildNav(){
 function fillModalLists(){
   fBank.innerHTML=BANKS.map(x=>`<option>${x}</option>`).join('');
   fCard.innerHTML=CARDS.map(x=>`<option>${x}</option>`).join('');
-  sourceFilter.innerHTML='<option value="">All Sources</option>'+[...BANKS,...CARDS].map(x=>`<option>${x}</option>`).join('');
+  sourceFilter.innerHTML='<option value="">All Sources</option>'+[...new Set([...BANKS,...CARDS])].map(x=>`<option>${x}</option>`).join('');
+  txAccountFilter.innerHTML='<option value="">All Accounts / Cards</option>'+[...new Set([...BANKS,...CARDS])].map(x=>`<option>${x}</option>`).join('');
 }
 function updateCategories(){
   const type=fType.value;
@@ -153,7 +161,7 @@ fType.onchange=()=>{updateCategories();togglePaymentFields()};
 fPayment.onchange=togglePaymentFields;
 
 function monthTransactions(y=year,m=month){
-  return tx.filter(t=>{const d=new Date(t.date+'T00:00:00');return d.getFullYear()===y&&d.getMonth()===m});
+  return tx.filter(t=>{const d=new Date(String(t.date).slice(0,10)+'T00:00:00');return d.getFullYear()===y&&d.getMonth()===m});
 }
 function getMonthly(y,m){
   const arr=monthly.find(x=>x.year===y&&x.month===m);
@@ -191,8 +199,8 @@ function renderDashboard(){
   const netCash=incomeN-bankExp-cardPay;
   const openingN=openingForMonth(year,month), closingN=openingN+netCash;
   opening.textContent=money(openingN);income.textContent=money(incomeN);expenses.textContent=money(bankExp+cardSpend);net.textContent=money(netCash);closing.textContent=money(closingN);
-  bankCards.innerHTML=banks.map(b=>`<div class="account"><b>🏦 ${b.name}</b><small>Balance: ${money(b.balance)}</small></div>`).join('');
-  cardCards.innerHTML=cards.map(c=>`<div class="account"><b>💳 ${c.name}</b><small>Outstanding: ${money(c.outstanding)}</small></div>`).join('');
+  bankCards.innerHTML=banks.map(b=>`<div class="account" onclick="showView('balances',document.querySelectorAll('aside .nav')[2]);renderAccountTransactions('${String(b.name).replace(/'/g,"\\'")}')"><b>🏦 ${b.name}</b><small>Balance: ${money(b.balance)}</small><small style="color:#5b4bff;margin-top:8px">View transactions →</small></div>`).join('');
+  cardCards.innerHTML=cards.map(c=>`<div class="account" onclick="showView('balances',document.querySelectorAll('aside .nav')[2]);renderAccountTransactions('${String(c.name).replace(/'/g,"\\'")}')"><b>💳 ${c.name}</b><small>Outstanding: ${money(c.outstanding)}</small><small style="color:#5b4bff;margin-top:8px">View transactions →</small></div>`).join('');
   drawYearChart(); drawCategoryChart();
 }
 function drawYearChart(){
@@ -221,18 +229,84 @@ function renderSummary(){
   <div class="mini"><b>Previous month</b><br>Income: ${money(prev.income)}<br>Expenses: ${money(prev.totalExpense)}<br>Net cash: ${money(prev.netCash)}</div>`;
 }
 function renderBalances(){
-  bankBalancePage.innerHTML=banks.map(b=>`<div class="account"><b>🏦 ${b.name}</b><small>Opening: ${money(b.opening)}</small><small>Current: ${money(b.balance)}</small></div>`).join('');
-  cardBalancePage.innerHTML=cards.map(c=>`<div class="account"><b>💳 ${c.name}</b><small>Opening: ${money(c.opening)}</small><small>Outstanding: ${money(c.outstanding)}</small></div>`).join('');
+  bankBalancePage.innerHTML=banks.map(b=>`<div class="account" onclick="renderAccountTransactions('${String(b.name).replace(/'/g,"\\'")}')">
+    <b>🏦 ${b.name}</b><small>Opening: ${money(b.opening)}</small><small>Current: ${money(b.balance)}</small>
+    <small style="color:#5b4bff;margin-top:8px">View transactions →</small>
+  </div>`).join('');
+  cardBalancePage.innerHTML=cards.map(c=>`<div class="account" onclick="renderAccountTransactions('${String(c.name).replace(/'/g,"\\'")}')">
+    <b>💳 ${c.name}</b><small>Opening: ${money(c.opening)}</small><small>Outstanding: ${money(c.outstanding)}</small>
+    <small style="color:#5b4bff;margin-top:8px">View transactions →</small>
+  </div>`).join('');
 }
+
+function transactionSource(t){
+  if(t.type==='Credit Card Payment') return `${t.bankAccount||''} → ${t.creditCard||''}`;
+  return t.paymentType==='Credit Card' ? (t.creditCard||'') : (t.bankAccount||'');
+}
+
 function renderTransactions(){
-  const a=monthTransactions().filter(t=>(!typeFilter.value||t.type===typeFilter.value)&&(!paymentFilter.value||t.paymentType===paymentFilter.value)&&(!sourceFilter.value||t.bankAccount===sourceFilter.value||t.creditCard===sourceFilter.value));
+  const search=(txSearch.value||'').toLowerCase().trim();
+  const account=txAccountFilter.value;
+  const a=monthTransactions().filter(t=>{
+    const source=transactionSource(t);
+    const hay=[t.date,t.type,t.category,t.description,t.notes,t.status,source].join(' ').toLowerCase();
+    return (!typeFilter.value||t.type===typeFilter.value)
+      && (!paymentFilter.value||t.paymentType===paymentFilter.value)
+      && (!sourceFilter.value||source.includes(sourceFilter.value))
+      && (!account||source.includes(account))
+      && (!search||hay.includes(search));
+  }).sort((x,y)=>String(y.date).localeCompare(String(x.date)));
+
   txCount.textContent=a.length;
-  txTable.innerHTML=`<table><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Payment</th><th>Source</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>`+
-  a.map(t=>{
-    const source=t.type==='Credit Card Payment'?`${t.bankAccount} → ${t.creditCard}`:(t.paymentType==='Credit Card'?t.creditCard:t.bankAccount);
-    const cls=t.type==='Credit Card Payment'?'transfer':(t.paymentType==='Credit Card'?'cc':'bank');
-    return `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.category}</td><td><span class="tag ${cls}">${t.paymentType}</span></td><td>${source}</td><td>${money(t.amount)}</td><td>${t.status||''}</td><td><button onclick="editTx(${t.row})">Edit</button></td></tr>`;
-  }).join('')+'</tbody></table>';
+  if(!a.length){
+    txTable.innerHTML='<div class="label" style="padding:18px">No transactions found for the selected month and filters.</div>';
+    return;
+  }
+
+  txTable.innerHTML=`<table><thead><tr>
+    <th>Date</th><th>Type</th><th>Category</th><th>Payment</th><th>Source</th>
+    <th>Description</th><th>Amount</th><th>Status</th><th>Action</th>
+  </tr></thead><tbody>${
+    a.map(t=>{
+      const source=transactionSource(t);
+      const cls=t.type==='Credit Card Payment'?'transfer':(t.paymentType==='Credit Card'?'cc':'bank');
+      return `<tr>
+        <td>${t.date||''}</td><td>${t.type||''}</td><td>${t.category||''}</td>
+        <td><span class="tag ${cls}">${t.paymentType||''}</span></td><td>${source}</td>
+        <td>${t.description||''}${t.notes?`<br><small style="color:#64748b">${t.notes}</small>`:''}</td>
+        <td><b>${money(t.amount)}</b></td><td>${t.status||''}</td>
+        <td><button onclick="editTx(${t.row})">Edit</button></td>
+      </tr>`;
+    }).join('')
+  }</tbody></table>`;
+}
+
+function renderAccountTransactions(account){
+  const a=tx.filter(t=>{
+    const d=new Date(String(t.date).slice(0,10)+'T00:00:00');
+    return d.getFullYear()===year && d.getMonth()===month && transactionSource(t).includes(account);
+  }).sort((x,y)=>String(y.date).localeCompare(String(x.date)));
+
+  balanceAccountTitle.textContent=account+' — '+MONTHS[month]+' '+year;
+  if(!a.length){
+    balanceAccountTx.innerHTML='<div class="label" style="padding:12px">No transactions for this account/card in the selected month.</div>';
+    return;
+  }
+
+  balanceAccountTx.innerHTML=`<div class="tx-detail-grid" style="margin-bottom:12px">
+    <div><small>Transactions</small><b>${a.length}</b></div>
+    <div><small>Total Amount</small><b>${money(a.reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
+    <div><small>Income</small><b>${money(a.filter(t=>t.type==='Income').reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
+    <div><small>Expenses / Payments</small><b>${money(a.filter(t=>t.type!=='Income').reduce((s,t)=>s+Number(t.amount||0),0))}</b></div>
+  </div>
+  <div style="max-height:500px;overflow:auto"><table><thead><tr>
+    <th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th>
+  </tr></thead><tbody>
+  ${a.map(t=>`<tr><td>${t.date||''}</td><td>${t.type||''}</td><td>${t.category||''}</td>
+    <td>${t.description||''}${t.notes?`<br><small style="color:#64748b">${t.notes}</small>`:''}</td>
+    <td><b>${money(t.amount)}</b></td><td>${t.status||''}</td><td><button onclick="editTx(${t.row})">Edit</button></td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
 }
 
 function openModal(t=null){
